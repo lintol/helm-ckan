@@ -1,4 +1,4 @@
-{{/* vim: set filetype=dosini: */}}
+{{/* vim: set filetype=sh: */}}
 {{/*
 Set up the primary CKAN configuration file
 */}}
@@ -9,10 +9,12 @@ Set up the primary CKAN configuration file
     /usr/lib/ckan/venv/bin/python2 /usr/local/bin/ckan-paster --plugin=ckan datastore set-permissions -c /etc/ckan/production.ini | psql -U ckan
 
     /usr/lib/ckan/venv/bin/python2 /usr/local/bin/ckan-paster --plugin=ckanext-validation validation init-db -c /etc/ckan/production.ini
+    {{- if .Values.defaultUser -}}
     echo "y
-    info@example.org
-    password
-    password
-    " | /usr/lib/ckan/venv/bin/python2 /usr/local/bin/ckan-paster --plugin=ckan sysadmin add johndoe -c /etc/ckan/production.ini
+    {{ .Values.defaultUser.email }}
+    {{ .Values.defaultUser.password }}
+    {{ .Values.defaultUser.password }}
+    " | /usr/lib/ckan/venv/bin/python2 /usr/local/bin/ckan-paster --plugin=ckan sysadmin add {{- .Values.defaultUser.username -}} -c /etc/ckan/production.ini
+    {{- end -}}
 
 {{- end -}}

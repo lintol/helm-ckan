@@ -1,3 +1,47 @@
+solr:
+  ~
+postgresql:
+  postgresPassword: POSTGRESPASSWORD
+redis:
+  redisPassword: REDISPASSWORD
+ckan-core:
+  defaultUser:
+    username: johndoe
+    email: info@example.com
+    password: testpassword
+  plugins:
+    all:
+    - stats
+    - text_view
+    - image_view
+    - recline_view
+    - scheming_datasets
+    - datastore
+    - datapusher
+    - validation
+    - oauth2provider
+
+    lintol:
+      token: TOKEN
+
+    oauth2provider:
+      secretKey: oauthkeytest
+
+    scheming: true
+
+    validation:
+      runOnUpdateAsync: true
+      runOnCreateAsync: true
+  siteUrl: http://localhost:5000
+  postgres:
+    password: POSTGRESPASSWORD
+  redisPassword: REDISPASSWORD
+  plugins:
+    oauth2provider:
+      token: OAUTHTOKEN
+    lintol:
+      token: LINTOLTOKEN
+
 resources:
   limits:
     cpu: 100m

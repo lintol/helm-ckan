@@ -1,4 +1,5 @@
 image: ckan/ckan
+imageTag: latest
 
 ## Specify a imagePullPolicy
 ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -19,7 +20,7 @@ postgres:
   dataStoreRoPassword: test
 
 maxUploadSize: 20 # in MB
-siteUrl: http://localhost
+siteUrl: http://localhost:5000
 
 redisPassword: test
 
@@ -46,3 +47,8 @@ plugins:
   validation:
     runOnUpdateAsync: true
     runOnCreateAsync: true
+
+defaultUser:
+  username: johndoe
+  email: info@example.com
+  password: testpassword

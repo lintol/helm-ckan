@@ -106,7 +106,7 @@ Set up the primary CKAN configuration file
     #       Add ``datapusher`` to enable DataPusher
     #		Add ``resource_proxy`` to enable resorce proxying and get around the
     #		same origin policy
-    ckan.plugins = {{- .Values.plugins.all -}}
+    ckan.plugins = {{- join " " .Values.plugins.all -}}
 
     {{ if .Values.plugins.oauth2provider }}
     ckanext.oauth2provider.secret_key = {{ .Values.plugins.oauth2provider.secretKey | quote }}
