@@ -106,7 +106,7 @@ Set up the primary CKAN configuration file
     #       Add ``datapusher`` to enable DataPusher
     #		Add ``resource_proxy`` to enable resorce proxying and get around the
     #		same origin policy
-    ckan.plugins = {{- join " " .Values.plugins.all -}}
+    ckan.plugins = {{ join " " .Values.plugins.all }}
 
     {{ if .Values.plugins.oauth2provider }}
     ckanext.oauth2provider.secret_key = {{ .Values.plugins.oauth2provider.secretKey | quote }}
@@ -117,8 +117,10 @@ Set up the primary CKAN configuration file
     scheming.dataset_schemas = ckanext.validation.examples:ckan_default_schema.json
     scheming.presets = ckanext.scheming:presets.json
     			ckanext.validation:presets.json
-    ckanext.validation.run_on_create_async = {{ .Values.plugins.runOnCreateAsync }}
-    ckanext.validation.run_on_update_async = {{ .Values.plugins.runOnUpdateAsync }}
+    ckanext.validation.run_on_create_async = {{ if .Values.plugins.runOnCreateAsync }}true{{ else }}false{{ end }}
+
+    ckanext.validation.run_on_update_async = {{ if .Values.plugins.runOnUpdateAsync }}true{{ else }}false{{ end }}
+
     {{ else }}
     scheming.presets = ckanext.scheming:presets.json
     {{ end }}
