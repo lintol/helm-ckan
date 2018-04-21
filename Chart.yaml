@@ -7,9 +7,9 @@ keywords:
   - ckan
 home: http://lintol.io
 sources:
-  - http://gitlab.com/lintol/buckram
+  - http://github.com/lintol/helm-ckan
 maintainers:
   - name: Phil Weir
     email: hello@lintol.io
-icon: https://gitlab.com/flaxandteal/buckram/raw/master/docs/drawing.svg
+    icon: https://raw.githubusercontent.com/ckan/ckan/master/ckan/public/base/images/ckan-logo.svg
 engine: gotpl
