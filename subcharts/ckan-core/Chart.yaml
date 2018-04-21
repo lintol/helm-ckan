@@ -1,0 +1,7 @@
+description: Chart for CKAN with Lintol plugins
+engine: gotpl
+home: https://ckan.org/
+keywords:
+- ckan
+name: ckan-core
+version: 0.0.1

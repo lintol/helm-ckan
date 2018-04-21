@@ -1,0 +1,107 @@
+## postgres image repository
+image: "ckan/postgresql"
+## postgres image version
+## ref: https://hub.docker.com/r/library/postgres/tags/
+##
+imageTag: "latest"
+
+backup:
+  image: flaxandteal/pg-dump-to-s3
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  aws:
+    roleBased: false # true for using credentials directly
+    role: "" # IAM role to request from k8s
+
+    accessKeyId: ""
+    secretAccessKey: ""
+
+    bucket: ""
+    region: ""
+    prefix: ""
+
+## Specify a imagePullPolicy
+## 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+##
+# imagePullPolicy:
+
+## Create a database user
+## Default: postgres
+postgresUser: ckan
+# postgresUser:
+## Default: random 10 character string
+# postgresPassword:
+
+## Create a database
+## Default: the postgres user
+# postgresDatabase:
+
+## Persist data to a persitent volume
+persistence:
+  enabled: true
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  ##
+  # storageClass:
+  #
+  ## If defined, volume.beta.kubernetes.io/storage-class: {fullname}-<storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: {fullname}-encrypted
+  ##
+  storageClassSuffix: encrypted
+  accessMode: ReadWriteOnce
+  size: 8Gi
+  subPath: "postgresql-db"
+
+metrics:
+  enabled: false
+  image: wrouesnel/postgres_exporter
+  imageTag: v0.1.1
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+
+authentication:
+  # Note these are set through initdb, so changes do not affect behaviour
+  # after first database creation
+  local: 'md5'
+  host: 'md5'
+
+logging:
+  enabled: true
+  destination: 'stderr'
+  collector:
+    enabled: false
+    directory: 'pg_log'
+    filename: 'postgresql-%Y-%m-%d_%H%M%S.log'
+    rotation:
+      truncate: false
+      age: '1d'
+      size: '10MB'
+  what:
+    linePrefix: '<%t %u %h> ' # default ''
+    connections: true
+    disconnections: true
+    statement: 'none' # none, ddl, mod, all
+
+security:
+  setAllMd5: true
+
+replication:
+  walLevel: 'logical'
+  walSenderTimeout: 0
+  maxReplicationSlots: 1
+  maxWalSenders: 1
+  ipRange: false # e.g. 123.45.67.89
+  ipRangeBits: 32 # e.g. 123.45.67.89/32
+  security: 'md5'

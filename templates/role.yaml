@@ -1,0 +1,17 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: {{ template "fullname" . }}-deploy
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch

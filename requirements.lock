@@ -1,0 +1,15 @@
+dependencies:
+- name: redis
+  repository: file://./subcharts/redis
+  version: 0.4.5
+- name: ckan-solr
+  repository: file://./subcharts/ckan-solr
+  version: 0.0.1
+- name: postgresql
+  repository: file://./subcharts/postgresql
+  version: 0.4.0
+- name: ckan-core
+  repository: file://./subcharts/ckan-core
+  version: 0.0.1
+digest: sha256:ddeaf5c6dca1ab85bedf2faaf8926ead7394f75c4199753f00a45576e3007c9a
+generated: 2018-03-18T02:08:37.314692842Z

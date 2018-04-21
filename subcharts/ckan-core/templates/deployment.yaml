@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  serviceName: {{ template "fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+    spec:
+      containers:
+      - name: {{ template "fullname" . }}
+        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+        env:
+        - name: CKAN_MAX_UPLOAD_SIZE_MD
+          value: {{ .Values.maxUploadSize | quote }}
+        - name: CKAN_SOLR_URL
+          value: {{ template "ckanSolrUrl" . }}
+        - name: CKAN_REDIS_URL
+          value: {{ template "ckanRedisUrl" . }}
+        - name: CKAN_DATAPUSHER_URL
+          value: {{ template "ckanDatapusherUrl" . }}
+        - name: CKAN_SITE_URL
+          value: {{ .Values.siteUrl | quote }}
+        - name: CKAN_SQLALCHEMY_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}
+              key: sqlalchemy-url
+        - name: CKAN_DATASTORE_WRITE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}
+              key: datastore-write-url
+        - name: CKAN_DATASTORE_READ_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}
+              key: datastore-read-url
+        volumeMounts:
+        - mountPath: /etc/ckan/production.ini
+          name: ckan-production-ini
+          subPath: production.ini
+        - mountPath: /initialize.sh
+          name: initialize-sh
+          subPath: initialize.sh
+        ports:
+        - name: ckan-core
+          containerPort: 5000
+        resources:
+      volumes:
+      - name: ckan-production-ini
+        configMap:
+          name: {{ template "fullname" . }}
+          items:
+          - key: ckanProductionIni
+            path: production.ini
+      - name: initialize-sh
+        configMap:
+          name: {{ template "fullname" . }}-initialize
+          items:
+          - key: initializeSh
+            path: initialize.sh
+{{ toYaml .Values.resources | indent 10 }}

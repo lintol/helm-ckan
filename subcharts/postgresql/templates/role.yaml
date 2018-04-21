@@ -1,0 +1,22 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: {{ template "fullname" . }}-database-access
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+    resourceNames:
+      - {{ template "fullname" . }}-0
+  - apiGroups:
+      - ""
+    resources:
+      - pods/portforward
+    resourceNames:
+      - {{ template "fullname" . }}-0
+    verbs:
+      - create

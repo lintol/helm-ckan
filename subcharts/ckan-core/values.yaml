@@ -1,0 +1,48 @@
+image: ckan/ckan
+
+## Specify a imagePullPolicy
+## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+##
+imagePullPolicy: IfNotPresent
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+
+postgres:
+  user: ckan
+  password: test
+  dataStoreRoPassword: test
+
+maxUploadSize: 20 # in MB
+siteUrl: http://localhost
+
+redisPassword: test
+
+plugins:
+  all:
+  - stats
+  - text_view
+  - image_view
+  - recline_view
+  - scheming_datasets
+  - datastore
+  - datapusher
+  - validation
+  - oauth2provider
+
+  lintol:
+    token: TOKEN
+
+  oauth2provider:
+    secretKey: oauthkeytest
+
+  scheming: true
+
+  validation:
+    runOnUpdateAsync: true
+    runOnCreateAsync: true

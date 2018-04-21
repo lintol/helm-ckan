@@ -1,0 +1,16 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: {{ template "fullname" . }}-deploy
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "fullname" . }}-deploy
+subjects:
+- kind: ServiceAccount
+  name: deploy
+  namespace: {{ .Release.Namespace }}
+- kind: Group
+  name: {{ template "fullname" . }}-deploy
+  namespace: {{ .Release.Namespace }}

@@ -1,0 +1,8 @@
+description: Apache Solr chart for CKAN
+engine: gotpl
+home: http://lucene.apache.org/solr/
+keywords:
+- solr
+- ckan
+name: ckan-solr
+version: 0.0.1
