@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-env
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  CKAN_MAX_UPLOAD_SIZE_MD: {{ .Values.maxUploadSize | quote }}
+  CKAN_SOLR_URL: {{ template "ckanSolrUrl" . }}
+  CKAN_REDIS_URL: {{ template "ckanRedisUrl" . }}
+  CKAN_DATAPUSHER_URL: {{ template "ckanDatapusherUrl" . }}
+  CKAN_SITE_URL: {{ .Values.siteUrl | quote }}
+  PGHOST: {{ .Release.Name }}-postgresql
+  CKAN_MAX_UPLOAD_SIZE_MD: {{ .Values.maxUploadSize | quote }}
+  SOLR_URL: {{ template "ckanSolrUrl" . }}
+  CKAN_SOLR_URL: {{ template "ckanSolrUrl" . }}
+  CKAN_REDIS_URL: {{ template "ckanRedisUrl" . }}
+  CKAN_DATAPUSHER_URL: {{ template "ckanDatapusherUrl" . }}
+  CKAN_SITE_URL: {{ .Values.siteUrl | quote }}
+  DATABASE_HOST: "{{- .Release.Name -}}-postgresql"

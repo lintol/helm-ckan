@@ -10,6 +10,9 @@ metadata:
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": hook-succeeded
+    checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    checksum/configmap-initialize: {{ include (print $.Template.BasePath "/configmap-initialize.yaml") . | sha256sum }}
+    checksum/configmap-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
 spec:
   template:
     metadata:
@@ -23,20 +26,11 @@ spec:
       containers:
       - name: post-install-job
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
-        command: ["/bin/bash", "/initialize.sh"]
+        command: ["/ckan-entrypoint.sh", "/bin/bash", "/initialize.sh"]
+        envFrom:
+        - configMapRef:
+            name: {{ template "fullname" . }}-env
         env:
-        - name: CKAN_MAX_UPLOAD_SIZE_MD
-          value: {{ .Values.maxUploadSize | quote }}
-        - name: CKAN_SOLR_URL
-          value: {{ template "ckanSolrUrl" . }}
-        - name: CKAN_REDIS_URL
-          value: {{ template "ckanRedisUrl" . }}
-        - name: CKAN_DATAPUSHER_URL
-          value: {{ template "ckanDatapusherUrl" . }}
-        - name: CKAN_SITE_URL
-          value: {{ .Values.siteUrl | quote }}
-        - name: PGHOST
-          value: {{ .Release.Name }}-postgresql
         - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
@@ -59,18 +53,28 @@ spec:
               key: datastore-read-url
         volumeMounts:
         - mountPath: /etc/ckan/production.ini
-          name: ckan-production-ini
+          name: ckan-production-ini-without-plugins
           subPath: production.ini
+        volumeMounts:
+        - mountPath: /etc/ckan/production-plugins.ini
+          name: ckan-production-ini
+          subPath: production-plugins.ini
         - mountPath: /initialize.sh
           name: initialize-sh
           subPath: initialize.sh
       volumes:
+      - name: ckan-production-ini-without-plugins
+        configMap:
+          name: {{ template "fullname" . }}
+          items:
+          - key: ckanProductionIniWithoutPlugins
+            path: production.ini
       - name: ckan-production-ini
         configMap:
           name: {{ template "fullname" . }}
           items:
           - key: ckanProductionIni
-            path: production.ini
+            path: production-plugins.ini
       - name: initialize-sh
         configMap:
           name: {{ template "fullname" . }}-initialize

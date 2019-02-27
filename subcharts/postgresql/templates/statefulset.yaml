@@ -30,6 +30,11 @@ spec:
           value: {{ default "" .Values.postgresDatabase | quote }}
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        - name: DS_RO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}
+              key: datastore-readonly-password
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -42,13 +47,13 @@ spec:
           exec:
             command:
             - pg_isready
-          initialDelaySeconds: 60
+          initialDelaySeconds: 10
           timeoutSeconds: 3
         readinessProbe:
           exec:
             command:
             - pg_isready
-          initialDelaySeconds: 60
+          initialDelaySeconds: 10
           timeoutSeconds: 3
         resources:
 {{ toYaml .Values.resources | indent 10 }}
@@ -104,7 +109,7 @@ spec:
         {{- if .Values.persistence.storageClass }}
         volume.beta.kubernetes.io/storage-class: {{ .Values.persistence.storageClass | quote }}
         {{- else }}
-        volume.alpha.kubernetes.io/storage-class: default
+        ~
         {{- end }}
       {{- end }}
     spec:
@@ -115,8 +120,6 @@ spec:
     {{- else }}
       {{- if .Values.persistence.storageClass }}
       storageClassName: {{ .Values.persistence.storageClass | quote }}
-      {{- else }}
-      storageClassName: default
       {{- end }}
     {{- end }}
       resources:

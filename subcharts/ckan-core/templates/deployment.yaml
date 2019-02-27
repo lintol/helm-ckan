@@ -7,6 +7,9 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
+  annotations:
+    checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    checksum/configmap-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
 spec:
   serviceName: {{ template "fullname" . }}
   replicas: 1
@@ -19,17 +22,15 @@ spec:
       - name: {{ template "fullname" . }}
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
         imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+        envFrom:
+        - configMapRef:
+            name: {{ template "fullname" . }}-env
         env:
-        - name: CKAN_MAX_UPLOAD_SIZE_MD
-          value: {{ .Values.maxUploadSize | quote }}
-        - name: CKAN_SOLR_URL
-          value: {{ template "ckanSolrUrl" . }}
-        - name: CKAN_REDIS_URL
-          value: {{ template "ckanRedisUrl" . }}
-        - name: CKAN_DATAPUSHER_URL
-          value: {{ template "ckanDatapusherUrl" . }}
-        - name: CKAN_SITE_URL
-          value: {{ .Values.siteUrl | quote }}
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}
+              key: sqlalchemy-url
         - name: CKAN_SQLALCHEMY_URL
           valueFrom:
             secretKeyRef:

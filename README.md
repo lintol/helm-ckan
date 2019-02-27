@@ -1,15 +1,17 @@
-# Helm Chart for CKAN
+# Simple Helm Chart for CKAN
 
 ## Plugin configuration
 
-1. Update build.sh to install the necessary plugins
-2. Build your custom ckan-core image, with `docker build -t MYREPO/my-ckan-image:MYTAG` and push it up
+Go to the `example` directory.
+
+1. Update _build.sh_ to install the necessary plugins
+2. Build your custom ckan-core image, with `docker build -t MYREPO/my-ckan-image:MYTAG` and push it up with `docker push`
 3. Set the plugins in values.yaml, and correct the ckan-core image name to `MYREPO/my-ckan-image:MYTAG`
-4. If you have added not-yet-incorporated plugins, you may need to add appropriate settings to `./subcharts/ckan-core/templates/_productionIni.tpl` and re-run `helm dependencies update .`
+4. If you have added plugins that have settings not already included in this Helm chart, you may need to add appropriate settings to `./subcharts/ckan-core/templates/_productionIni.tpl` and re-run `helm dependencies update .` (please consider a pull request, to help us support more plugins out of the box)
 
 ## Deployment
 
-1. Copy the important components of the `values.yaml` file into a new `development.yaml` file outside the git tree
+1. Copy the `values.yaml` file from the `example` subdirectory into a new location outside the gitroot, e.g. `development.yaml` in the directory above.
 2. `helm install --name development-ckan . --values=../development.yaml --namespace=ckan`
 
 At present, we do not have any default ingress, so you can reach the CKAN web interface using:

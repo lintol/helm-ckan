@@ -1,9 +1,13 @@
 solr:
   ~
 postgresql:
-  postgresPassword: POSTGRESPASSWORD
+  # Only difference with this image is that it's more recently built from upstream's master, than upstream's image
+  image: "flaxandteal/ckan-postgresql"
+  postgresPassword: TEST
+  # persistence:
+  #   storageClassSuffix: null
 redis:
-  redisPassword: REDISPASSWORD
+  redisPassword: TEST
 ckan-core:
   defaultUser:
     username: johndoe
@@ -21,26 +25,22 @@ ckan-core:
     - validation
     - oauth2provider
 
-    lintol:
-      token: TOKEN
-
     oauth2provider:
       secretKey: oauthkeytest
 
-    scheming: true
+    scheming: false
 
-    validation:
-      runOnUpdateAsync: true
-      runOnCreateAsync: true
-  siteUrl: http://localhost:5000
+    validation: false
+    # runOnUpdateAsync: true
+    # runOnCreateAsync: true
+  siteUrl: https://ckan.ev.openindustry.in
   postgres:
-    password: POSTGRESPASSWORD
-  redisPassword: REDISPASSWORD
+    password: TEST
+    dataStoreRoPassword: "TEST"
+  redisPassword: TEST
   plugins:
     oauth2provider:
       token: OAUTHTOKEN
-    lintol:
-      token: LINTOLTOKEN
 
 resources:
   limits:

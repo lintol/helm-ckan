@@ -9,3 +9,5 @@ metadata:
 data:
   ckanProductionIni: |
     {{ include "ckanProductionIni" . }}
+  ckanProductionIniWithoutPlugins: |
+    {{ include "ckanProductionIniWithoutPlugins" . }}

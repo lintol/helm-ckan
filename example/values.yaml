@@ -1,0 +1,27 @@
+postgresql:
+  # Only difference with this image is that it's more recently built from upstream's master, than upstream's image
+  image: "flaxandteal/ckan-postgresql"
+  postgresPassword: TEST
+  dataStoreRoPassword: TEST
+  persistence:
+    storageClassSuffix: null
+ckan-core:
+  image: flaxandteal/ckan-built
+  imageTag: latest
+  plugins:
+    all:
+    - stats
+    - text_view
+    - image_view
+    - recline_view
+    # scheming_datasets
+    - datastore
+    - datapusher
+    # validation
+    - oauth2provider
+  postgres:
+    password: TEST
+    dataStoreRoPassword: TEST
+  redisPassword: TEST
+redis:
+  redisPassword: TEST

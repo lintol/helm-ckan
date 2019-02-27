@@ -32,6 +32,7 @@ postgresUser: ckan
 # postgresUser:
 ## Default: random 10 character string
 # postgresPassword:
+dataStoreRoPassword: ""
 
 ## Create a database
 ## Default: the postgres user
