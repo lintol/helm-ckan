@@ -28,3 +28,9 @@ helm delete job development-ckan-post-install
 ```
 
 (the second command is only required in the event that the database initialization fails, otherwise the job will be cleaned on start-up)
+
+## Caveats
+
+* a Helm delete and Helm install pair require removal of PVCs in between, and any post-install job
+* Harvest should not be included on first install
+* `SELECT package.id, package.title FROM package join harvest_object ho on package.id=ho.package_id group by package.id having count(package.id) >1;`

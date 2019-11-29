@@ -13,3 +13,19 @@ resources:
   requests:
     memory: 256Mi
     cpu: 100m
+
+## Persist data to a persistent volume
+persistence:
+  enabled: true
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  ##
+  # storageClass:
+  #
+  ## If defined, volume.beta.kubernetes.io/storage-class: {fullname}-<storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: {fullname}-encrypted
+  ##
+  storageClass: standard
+  accessMode: ReadWriteOnce
+  size: 8Gi
+  subPath: "ckan"

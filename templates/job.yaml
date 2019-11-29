@@ -1,0 +1,81 @@
+{{- if .Values.runningJob -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{.Values.jobName}}"
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    job: "ckan-paster-job"
+spec:
+  template:
+    metadata:
+      name: "{{.Values.jobName}}"
+      labels:
+        job: "ckan-paster-job"
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: paster-job
+        image: "{{ index .Values "ckan-core" "image" }}:{{ index .Values "ckan-core" "imageTag" }}"
+        command:
+        - "/ckan-entrypoint.sh"
+        - "/usr/lib/ckan/venv/bin/python2"
+        - "/usr/local/bin/ckan-paster"
+        {{- range split " " .Values.pasterCommand }}
+        - {{ . -}}
+        {{ end }}
+        envFrom:
+        - configMapRef:
+            name: {{ template "fullname" . }}-core-env
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}-core
+              key: postgres-password
+        - name: CKAN_SQLALCHEMY_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}-core
+              key: sqlalchemy-url
+        - name: CKAN_DATASTORE_WRITE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}-core
+              key: datastore-write-url
+        - name: CKAN_DATASTORE_READ_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}-core
+              key: datastore-read-url
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "fullname" . }}-core
+              key: sqlalchemy-url
+        volumeMounts:
+        - mountPath: /etc/ckan/production.ini
+          name: ckan-production-ini
+          subPath: production.ini
+        - mountPath: /initialize.sh
+          name: initialize-sh
+          subPath: initialize.sh
+      volumes:
+      - name: ckan-production-ini
+        configMap:
+          name: {{ template "fullname" . }}-core
+          items:
+          - key: ckanProductionIni
+            path: production.ini
+      - name: initialize-sh
+        configMap:
+          name: {{ template "fullname" . }}-core-initialize
+          items:
+          - key: initializeSh
+            path: initialize.sh
+{{- end -}}

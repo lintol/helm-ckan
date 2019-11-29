@@ -35,6 +35,7 @@ plugins:
   - datapusher
   - validation
   - oauth2provider
+  - harvest
 
   lintol:
     token: TOKEN
@@ -47,6 +48,8 @@ plugins:
   validation:
     runOnUpdateAsync: true
     runOnCreateAsync: true
+
+  harvest: false
 
 defaultUser:
   username: johndoe

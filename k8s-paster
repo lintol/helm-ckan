@@ -1,0 +1,65 @@
+#!/bin/sh
+
+if [ "$1" = "" ]
+then
+	echo "Must have chart name as first paster argument"
+	exit 1
+fi
+
+if [ "$2" = "" ]
+then
+	echo "Must have values file as second paster argument"
+	exit 1
+fi
+
+RELEASE=$1
+VALUES=$2
+shift
+shift
+
+if [ "$*" = "" ]
+then
+	echo "Must have paster commands (use /etc/ckan/production.ini for config)"
+	exit 1
+fi
+
+JOBNAME=$RELEASE-paster-job-$(date '+%s')
+PASTERCOMMAND=$@
+
+kubectl delete job --selector="job=ckan-paster-job" --ignore-not-found
+helm template -n srv-ckan . --values $VALUES --set "jobName=$JOBNAME,runningJob=1,pasterCommand=$PASTERCOMMAND" -x templates/job.yaml | kubectl create -f -
+
+getJob() {
+	kubectl get jobs $JOBNAME --output=jsonpath="{range .items[*]}{.metadata.name}{end}"
+}
+
+getPrePod () {
+	kubectl get pods --selector="job-name=$JOBNAME" --field-selector="status.phase=Pending" --output=jsonpath="{range .items[*]}{.metadata.name}{end}"
+}
+
+getPod () {
+	kubectl get pods --selector="job-name=$JOBNAME" --field-selector="status.phase=Running" --output=jsonpath="{range .items[*]}{.metadata.name}{end}"
+}
+
+cleanup () {
+	POD="$(getPod $JOBNAME)"
+	if [ "$POD" != "" ]
+	then
+		kubectl delete job $JOBNAME
+	fi
+	exit 2
+}
+
+sleep 1
+while [ "$(getPrePod $JOBNAME)" != "" ]
+do
+	echo "[waiting...]"
+	sleep 0.5
+done
+
+trap "cleanup" 2
+
+if [ "$(getPod $JOBNAME)" != "" ]
+then
+	kubectl logs -f $(getPod $JOBNAME)
+fi

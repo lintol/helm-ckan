@@ -24,9 +24,13 @@ ckan-core:
     - datapusher
     - validation
     - oauth2provider
+    - harvest
+    - ckan_harvester
 
     oauth2provider:
       secretKey: oauthkeytest
+
+    harvest: false
 
     scheming: false
 

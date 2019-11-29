@@ -1,13 +1,13 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ template "fullname" . }}-datapusher
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-    purpose: web
+    purpose: datapusher
   annotations:
     checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     checksum/configmap-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
@@ -18,12 +18,12 @@ spec:
     metadata:
       labels:
         app: {{ template "fullname" . }}
-        purpose: web
+        purpose: datapusher
     spec:
       containers:
-      - name: {{ template "fullname" . }}
-        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
-        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+      - name: {{ template "fullname" . }}-datapusher
+        image: "{{ .Values.datapusher.image }}:{{ .Values.datapusher.imageTag }}"
+        imagePullPolicy: {{ default "" .Values.datapusher.imagePullPolicy | quote }}
         envFrom:
         - configMapRef:
             name: {{ template "fullname" . }}-env
@@ -56,20 +56,7 @@ spec:
           name: initialize-sh
           subPath: initialize.sh
         ports:
-        - name: ckan-core
-          containerPort: 5000
+        - name: ckan-datapusher
+          containerPort: 8800
         resources:
-      volumes:
-      - name: ckan-production-ini
-        configMap:
-          name: {{ template "fullname" . }}
-          items:
-          - key: ckanProductionIni
-            path: production.ini
-      - name: initialize-sh
-        configMap:
-          name: {{ template "fullname" . }}-initialize
-          items:
-          - key: initializeSh
-            path: initialize.sh
 {{ toYaml .Values.resources | indent 10 }}

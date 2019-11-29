@@ -112,6 +112,12 @@ Set up the primary CKAN configuration file
     ckanext.oauth2provider.secret_key = {{ .Values.plugins.oauth2provider.secretKey | quote }}
     {{ end }}
 
+    {{ if .Values.plugins.harvest }}
+    ckan.harvest.mq.type = redis
+    ckan.harvest.mq.hostname = {{ .Release.Name }}-redis
+    ckan.harvest.mq.password = {{ .Values.redisPassword }}
+    {{ end }}
+
     {{ if .Values.plugins.scheming }}
     {{ if .Values.plugins.validation }}
     scheming.dataset_schemas = ckanext.validation.examples:ckan_default_schema.json

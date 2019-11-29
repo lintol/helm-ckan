@@ -22,5 +22,39 @@ spec:
         ports:
         - name: ckan-solr
           containerPort: 8983
+        volumeMounts:
+        - name: data
+          mountPath: /opt/solr/server/solr/ckan/data
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+      annotations:
+      {{- if .Values.persistence.storageClassSuffix }}
+        volume.beta.kubernetes.io/storage-class: {{ template "fullname" . }}-{{ .Values.persistence.storageClassSuffix }}
+      {{- else }}
+        {{- if .Values.persistence.storageClass }}
+        volume.beta.kubernetes.io/storage-class: {{ .Values.persistence.storageClass | quote }}
+        {{- else }}
+        ~
+        {{- end }}
+      {{- end }}
+    spec:
+      accessModes:
+        - {{ .Values.persistence.accessMode | quote }}
+    {{- if .Values.persistence.storageClassSuffix }}
+      storageClassName: {{ template "fullname" . }}-{{ .Values.persistence.storageClassSuffix }}
+    {{- else }}
+      {{- if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass | quote }}
+      {{- end }}
+    {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size | quote }}
