@@ -11,5 +11,5 @@ dependencies:
 - name: ckan-core
   repository: file://./subcharts/ckan-core
   version: 0.0.1
-digest: sha256:ddeaf5c6dca1ab85bedf2faaf8926ead7394f75c4199753f00a45576e3007c9a
-generated: 2018-03-18T02:08:37.314692842Z
+digest: sha256:459fb5b5d268c72da5425d4421b97011a26bd1a78a4c6cef06e7a52844c4541c
+generated: "2020-07-06T21:51:09.518576498+01:00"

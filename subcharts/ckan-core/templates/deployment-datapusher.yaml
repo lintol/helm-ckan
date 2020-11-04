@@ -1,3 +1,4 @@
+{{- if .Values.datapusher.enabled -}}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -12,7 +13,6 @@ metadata:
     checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     checksum/configmap-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
 spec:
-  serviceName: {{ template "fullname" . }}
   replicas: 1
   template:
     metadata:
@@ -60,3 +60,17 @@ spec:
           containerPort: 8800
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+      volumes:
+      - name: ckan-production-ini
+        configMap:
+          name: {{ template "fullname" . }}
+          items:
+          - key: ckanProductionIni
+            path: production.ini
+      - name: initialize-sh
+        configMap:
+          name: {{ template "fullname" . }}-initialize
+          items:
+          - key: initializeSh
+            path: initialize.sh
+{{- end -}}

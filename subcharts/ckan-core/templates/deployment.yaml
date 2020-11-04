@@ -12,7 +12,6 @@ metadata:
     checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     checksum/configmap-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
 spec:
-  serviceName: {{ template "fullname" . }}
   replicas: 1
   template:
     metadata:
@@ -27,27 +26,8 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ template "fullname" . }}-env
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "fullname" . }}
-              key: sqlalchemy-url
-        - name: CKAN_SQLALCHEMY_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "fullname" . }}
-              key: sqlalchemy-url
-        - name: CKAN_DATASTORE_WRITE_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "fullname" . }}
-              key: datastore-write-url
-        - name: CKAN_DATASTORE_READ_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "fullname" . }}
-              key: datastore-read-url
+        - secretRef:
+            name: {{ template "fullname" . }}-env
         volumeMounts:
         - mountPath: /etc/ckan/production.ini
           name: ckan-production-ini
@@ -59,6 +39,7 @@ spec:
         - name: ckan-core
           containerPort: 5000
         resources:
+{{ toYaml .Values.resources | indent 10 }}
       volumes:
       - name: ckan-production-ini
         configMap:
@@ -72,4 +53,3 @@ spec:
           items:
           - key: initializeSh
             path: initialize.sh
-{{ toYaml .Values.resources | indent 10 }}

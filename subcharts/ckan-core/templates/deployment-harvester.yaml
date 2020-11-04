@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ template "fullname" . }}-harvester
   labels:
-    app: {{ template "fullname" . }}
+    app: {{ template "fullname" . }}-harvester
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -12,7 +12,6 @@ metadata:
     checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     checksum/configmap-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
 spec:
-  serviceName: {{ template "fullname" . }}
   replicas: 1
   template:
     metadata:

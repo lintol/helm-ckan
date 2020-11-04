@@ -14,3 +14,4 @@ spec:
     targetPort: ckan-core
   selector:
     app: {{ template "fullname" . }}
+    purpose: web

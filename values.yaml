@@ -10,7 +10,7 @@ redis:
   redisPassword: TEST
 ckan-core:
   defaultUser:
-    username: johndoe
+    username: administrator
     email: info@example.com
     password: testpassword
   plugins:
@@ -45,6 +45,9 @@ ckan-core:
   plugins:
     oauth2provider:
       token: OAUTHTOKEN
+  datapusher:
+    image: ckan/ckan
+    imageTag: latest
 
 resources:
   limits:

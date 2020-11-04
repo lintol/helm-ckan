@@ -55,3 +55,8 @@ defaultUser:
   username: johndoe
   email: info@example.com
   password: testpassword
+
+datapusher:
+  image: ckan/ckan
+  imageTag: latest
+  enabled: true
